@@ -1,0 +1,36 @@
+---
+- name: Install Python on managed hosts
+  hosts: server
+  become: yes
+  tasks:
+  
+    - name: Update package list (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+    
+    - name: Install Python (Debian/Ubuntu)
+      apt:
+        name: python3
+        state: present
+      when: ansible_os_family == "Debian"
+    
+    - name: Install Python (RedHat/CentOS)
+      yum:
+        name: python3
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install Python (Fedora)
+      dnf:
+        name: python3
+        state: present
+      when: ansible_os_family == "Fedora"
+
+    - name: Verify Python installation
+      command: python3 --version
+      register: python_version
+
+    - name: Print Python version
+      debug:
+        msg: "Python version installed: {{ python_version.stdout }}"
